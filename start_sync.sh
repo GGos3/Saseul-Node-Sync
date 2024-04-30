@@ -35,6 +35,9 @@ sync_node() {
     docker exec -i saseul-node saseul-script forcesync --peer main.saseul.net 2>&1 | tee -a $LOG_FILE &
     PID=$!
 
+    sleep 10
+    echo >> "$LOG_FILE"
+
     local update_main=0
     local update_resource=0
 
@@ -54,11 +57,7 @@ sync_node() {
                 MY_RESOURCE=$(echo $LINE | awk '{print $4}')
                 update_resource=1
                 ;;
-            *"Connection failed. Retry.. 5"*)
-                kill $PID
-                break
-                ;;
-            *"There is no data."*)
+            *"Connection failed. Retry.. 5"* | "There is no data."*)
                 kill $PID
                 break
                 ;;
